@@ -14,9 +14,10 @@
 #  Usage:
 #  1) Gather up SYSTEM hives
 #  2) Run RegRipper on all system hives. Make sure to use the modified version.
-#  3) grep APPCACHE $1 | cut -d: -f2- | sort -t\| -nk2 | cut -d\| -f1 | uniq -c -i | tee app_uniq_$1.txt
-#     grep APPCACHE appcache1130.txt | cut -d: -f 2-  |cut -d\| -f1 | sort | uniq -c | sort -h > /mnt/truecrypt6/shimcache/zzzkm.txt
-#  4) ir_distill --sqlite os.sqlite --file app_uniq_f0.txt  --out outputfile --ignorecase
+#      Windows: find {directory with system hives} -print -exec rip.exe -r {}  -p appcompatcache ; >> appcache{date}.txt
+#      *NIX:    find {directory with system hives} -print -exec rip.pl  -r {}  -p appcompatcache \; >> appcache{date}.txt
+#  3) grep APPCACHE appcache{date}.txt | cut -d: -f 2-  |cut -d\| -f1 | sort | uniq -c | sort -h > {filename}.txt
+#  4) ir_distill --sqlite os.sqlite --file {filename}.txt  --out {outputfilename} --ignorecase
 #  5) Review output
 #
 ###################################################################################################
