@@ -38,11 +38,22 @@ sub getShortDescr {
 }
 sub getRefs {}
 
+sub gmtimeconvert {
+    my $gmtime = shift;
+    
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($gmtime);
+    #$year = $year + 1900;
+	my $newtime = sprintf '%04d-%02d-%02d %02d:%02d:%02d',$year + 1900, $mon + 1, $mday, $hour, $min,$sec;
+    return($newtime);
+}
+
+
 sub pluginmain {
 	my $class = shift;
 	my $hive = shift;
     ::rptMsg("Hive: ".$hive."\n");
 	::logMsg("Launching amcache_tln v.".$VERSION);
+	::logMsg("Parsing: ".$hive."\n");
 #  ::rptMsg("amcache v.".$VERSION); 
 #  ::rptMsg("(".$config{hive}.") ".getShortDescr()."\n");     
 	my $reg = Parse::Win32Registry->new($hive);
@@ -104,7 +115,7 @@ sub parseInventoryApplicationFile {
 				$hash =~ s/^0000//;
 			};
 			# Had to add a | to the fields match up in count
-			::rptMsg($lw."|AmCache_IA||||Key LastWrite|".$path."|".$hash."|".$hive);
+			::rptMsg(gmtimeconvert($lw)."|AmCache_InventoryApplication||||Key LastWrite|".$path."|".$hash."|".$hive);
 		}
 	}
 	else {
@@ -127,7 +138,7 @@ sub parseInventoryApplication {
 			eval {
 				$version = "v.".$s->get_value("Version")->get_data();
 			};	
-			::rptMsg(gmtime($lw)."|".$name."|".$version);
+			::rptMsg(gmtimeconvert($lw)."|".$name."|".$version);
 		}
 	}
 	else {
@@ -159,7 +170,7 @@ sub parseFile {
 				  } else {
 				    $fileref = $fileref."|";
                 }
-				::rptMsg($lw."|AmCache|||Key LastWrite|".$fileref."||".$hive);
+				::rptMsg(gmtimeconvert($lw)."|AmCache|||Key LastWrite|".$fileref."||".$hive);
 
 # get last mod./creation times									
 				my @dots = qw/. . . ./;
@@ -188,14 +199,14 @@ sub parseFile {
 
 				foreach my $t (reverse sort {$a <=> $b} keys %t_hash) {
 					my $str = join('',@{$t_hash{$t}});
-					::rptMsg($t."|AmCache_CT|||".$str."|".$fileref."||".$hive);
+					::rptMsg(gmtimeconvert($t)."|AmCache_CreationTime|||".$str."|".$fileref."||".$hive);
 				}
 						
 # check for PE Compile times					
 				eval {
 					my $pe = $s->get_value("f")->get_data();
 
-					::rptMsg($pe."|AmCache_PE|||PE Compile time Z|".$fileref."||".$hive);
+					::rptMsg(gmtimeconvert($pe)."|AmCache_PECompileTime|||PE Compile time Z|".$fileref."||".$hive);
 					#::rptMsg("Compile Time  : ".$gt." Z");
 				};				
 		

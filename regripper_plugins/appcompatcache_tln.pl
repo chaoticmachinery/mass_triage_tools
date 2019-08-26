@@ -60,6 +60,15 @@ my %files;
 my $str = "";
 my $computername;
 
+sub gmtimeconvert {
+    my $gmtime = shift;
+    
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($gmtime);
+    #$year = $year + 1900;
+	my $newtime = sprintf '%04d-%02d-%02d %02d:%02d:%02d',$year + 1900, $mon + 1, $mday, $hour, $min,$sec;
+    return($newtime);
+}
+
 
 sub pluginmain {
 	my $class = shift;
@@ -99,13 +108,13 @@ sub pluginmain {
 			eval {
 				$app_data = $appcompat->get_subkey("AppCompatibility")->get_value("AppCompatCache")->get_data();
 				::rptMsg($appcompat_path."\\AppCompatibility");
-			  ::rptMsg("LastWrite Time: ".gmtime($appcompat->get_subkey("AppCompatibility")->get_timestamp())." Z");
+			  ::rptMsg("LastWrite Time: ".gmtimeconvert($appcompat->get_subkey("AppCompatibility")->get_timestamp())." Z");
 			};
 			
 			eval {
 				$app_data = $appcompat->get_subkey("AppCompatCache")->get_value("AppCompatCache")->get_data();
 				::rptMsg($appcompat_path."\\AppCompatCache");
-			  ::rptMsg("LastWrite Time: ".gmtime($appcompat->get_subkey("AppCompatCache")->get_timestamp())." Z");
+			  ::rptMsg("LastWrite Time: ".gmtimeconvert($appcompat->get_subkey("AppCompatCache")->get_timestamp())." Z");
 			};
 				
 #			::rptMsg("Length of data: ".length($app_data));
@@ -158,7 +167,7 @@ sub pluginmain {
 				$str .= " [Size = ".$files{$f}{size}." bytes]" if (exists $files{$f}{size});
 				$str .= "|".$computername;
 				$str .= "|[Executed]" if (exists $files{$f}{executed}); 
-				::rptMsg($files{$f}{modtime}."|REG|||".$str);
+				::rptMsg(gmtimeconvert($files{$f}{modtime})."|REG|||".$str);
 			}
 		}
 		else {
