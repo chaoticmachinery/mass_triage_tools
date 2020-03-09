@@ -14,8 +14,8 @@
 # reduce the amount of time it takes to parse hunderds/thousands of EVTX.
 #
 # Parallel Example:
-# find . -name "*evtx_" | parallel --keep-order  --progress --jobs {# of cores} newservice_etvx_parse.pl -f {}  | tee {output}
-# find . -name "*evtx_" | parallel --keep-order  --progress --jobs 10 newservice_etvx_parse.pl -f {}  | tee output
+# find . -name "*evtx_" | parallel --keep-order  --progress --jobs {# of cores} newservice_system_evtxe.pl -f {}  | tee {output}
+# find . -name "*evtx_" | parallel --keep-order  --progress --jobs 10 newservice_system_evtx.pl -f {}  | tee output
 #
 # Processing output
 # The output must be manuipulated for frequency analysis. The command is:
@@ -114,13 +114,13 @@ $fh->close();
 
 __END__
 
-=head1 newservice_evtx_parse.pl
+=head1 newservice_system_evtx.pl
 
 Image device
 
 =head1 SYNOPSIS
 
-newservice_evtx_parse.pl [options] [file ...]
+newservice_system_evtx.pl [options] [file ...]
 
 Options:
 
@@ -146,5 +146,5 @@ Prints the manual page and exits.
 
 =head1 DESCRIPTION
 
-B<newservice_evtx_parse.pl> parse the EVTX System log for 7045.
+B<newservice_system_evtx.pl> parse the EVTX System log for 7045.
 =cut
