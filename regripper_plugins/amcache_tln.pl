@@ -39,12 +39,12 @@ sub getShortDescr {
 sub getRefs {}
 
 sub gmtimeconvert {
-    my $gmtime = shift;
+    my $time = shift;
     
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($gmtime);
-    #$year = $year + 1900;
-	my $newtime = sprintf '%04d-%02d-%02d %02d:%02d:%02d',$year + 1900, $mon + 1, $mday, $hour, $min,$sec;
-    return($newtime);
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($time);
+    $year = $year + 1900;
+    my $returntime = $year."-".sprintf('%02d',$mon)."-".sprintf('%02d',$mday)." ".sprintf('%02d',$hour).":".sprintf('%02d',$min).":".(sprintf '%02d',$sec);
+    return($returntime)
 }
 
 
@@ -115,7 +115,7 @@ sub parseInventoryApplicationFile {
 				$hash =~ s/^0000//;
 			};
 			# Had to add a | to the fields match up in count
-			::rptMsg(gmtimeconvert($lw)."|AmCache_InventoryApplication||||Key LastWrite|".$path."|".$hash."|".$hive);
+			::rptMsg($lw."|".gmtimeconvert($lw)."|AmCache_InventoryApplication||||Key LastWrite|".$path."|".$hash."|".$hive);
 		}
 	}
 	else {
@@ -162,6 +162,13 @@ sub parseFile {
 				my $fileref = $s->get_name();
 				my $lw      = $s->get_timestamp();
 
+#Get the SHA1 hash
+			my $hash;
+			eval {
+				$hash = $s->get_value("101")->get_data();
+				$hash =~ s/^0000//;
+			};
+			
 # First, report key lastwrite time (== execution time??)					
 				eval {
 					$fileref = $fileref."|".$s->get_value("15")->get_data();
@@ -170,7 +177,7 @@ sub parseFile {
 				  } else {
 				    $fileref = $fileref."|";
                 }
-				::rptMsg(gmtimeconvert($lw)."|AmCache|||Key LastWrite|".$fileref."||".$hive);
+				::rptMsg($lw."|".gmtimeconvert($lw)."|AmCache|||Key LastWrite|".$fileref."|".$hash."||".$hive);
 
 # get last mod./creation times									
 				my @dots = qw/. . . ./;
@@ -199,14 +206,14 @@ sub parseFile {
 
 				foreach my $t (reverse sort {$a <=> $b} keys %t_hash) {
 					my $str = join('',@{$t_hash{$t}});
-					::rptMsg(gmtimeconvert($t)."|AmCache_CreationTime|||".$str."|".$fileref."||".$hive);
+					::rptMsg($t."|".gmtimeconvert($t)."|AmCache_CreationTime|||".$str."|".$fileref."|".$hash."||".$hive);
 				}
 						
 # check for PE Compile times					
 				eval {
 					my $pe = $s->get_value("f")->get_data();
 
-					::rptMsg(gmtimeconvert($pe)."|AmCache_PECompileTime|||PE Compile time Z|".$fileref."||".$hive);
+					::rptMsg($pe."|".gmtimeconvert($pe)."|AmCache_PECompileTime|||PE Compile time Z|".$fileref."|".$hash."||".$hive);
 					#::rptMsg("Compile Time  : ".$gt." Z");
 				};				
 		
