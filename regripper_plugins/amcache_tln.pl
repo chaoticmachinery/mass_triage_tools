@@ -15,6 +15,8 @@
 #
 # Copyright (c) 2018 QAR, LLC
 # Author: H. Carvey, keydet89@yahoo.com
+#
+# Additional Mods: Keven Murphy
 #-----------------------------------------------------------
 package amcache_tln;
 use strict;
