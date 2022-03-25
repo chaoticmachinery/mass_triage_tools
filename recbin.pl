@@ -170,7 +170,9 @@ sub parseWin7 {
 		print $t."|RECBIN|".$config{system}."|".$config{user}."|DEL - [".$sz."] ".$name."\n";
 	}
 	else {
-		print $file."|".$name." [".$sz." bytes] deleted on ".gmtime($t)." Z\n";
+		my $rfile = $file;
+		$rfile =~ s/\$I/\$R/;
+		print $rfile."|".$name."|".$sz." bytes|".gmtime($t)." Z\n";
 	}
 }
 
