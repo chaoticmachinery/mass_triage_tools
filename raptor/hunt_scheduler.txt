@@ -1,0 +1,15 @@
+Hunt Scheduler
+The hunt_scheduler python script can be used to auto schedule hunts. It reads in a CSV file containing the name of the hunt, max run time of the hunt, and whether or not to run right away. The script does have some output related to the hunts scheduled from the server. Typically, the output can be ignored. 
+Example run:
+hunt_scheduler_v0.1.py --config machine_api_client.yaml --csv hunts.csv –ocsv
+Options:
+	--config  api_config configuration file (Required)
+	--csv  	CSV formated file containing hunts, max time, TRUE/FALSE (Required)
+	--ocsv	Use CSV format for the output from the server
+	--ojson	Use JSON format for the output from the server
+
+CSV File Layout: artifact,time,pause
+The “artifact” field contains the name of the artifact that needs to be ran. This will also be name of the hunt. The “time” field is the max run time of the hunt. Finally, the “pause” field will either schedule the  hunt to run or stay in a pause state. “FALSE” in this field will cause the hunt to be ran immediately. A “TRUE” in the “pause” field will tell the script to schedule the hunt in a pause state. 
+For example:
+	GPS.Generic.System.Pstree,99999,FALSE
+	GPS.Linux.Collection.TAR,99999,FALSE
