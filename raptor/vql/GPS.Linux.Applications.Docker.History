@@ -1,0 +1,40 @@
+name: GPS.Linux.Applications.Docker.History
+author: Keven Murphy
+description: |
+  Get Dockers history thru commandline.
+
+  Date: 07/14/22
+  
+parameters:
+  - name: CommandContainer
+    default: "docker container ls -a --no-trunc --format='{{json . }}' 2>/dev/null " 
+  - name: CommandDockerHistory
+    default: "docker history --no-trunc --format='{{json . }}' "
+    
+sources:
+  - precondition: |
+      SELECT OS From info() where OS = 'linux'
+    query: |
+    
+        LET currenttime = now()
+        LET containerdata <= SELECT parse_json(data=Stdout) as CDJSON FROM execve(argv=["/bin/bash", "-c", CommandContainer],sep='\n')
+
+        LET containerhistory <= SELECT
+           *,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM foreach(
+            row={SELECT CDJSON.Image as ContID FROM containerdata}, 
+            query={
+              SELECT *,ContID,parse_json(data=Stdout) as JSON FROM execve(argv=["/bin/bash", "-c", CommandDockerHistory+ContID],sep='\n')
+        })
+        
+        SELECT 
+           JSON.CreatedAt as CreatedAt,
+           JSON.CreatedBy as CreatedBy,
+           JSON.CreatedSince as CreatedSince,
+           JSON.ID as ID,
+           ContID as ContainerID,
+           JSON.Size as Size,
+           JSON.Comment as Comment,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM containerhistory
