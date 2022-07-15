@@ -1,0 +1,34 @@
+name: GPS.Linux.Applications.Docker.ContainerLogs
+author: Keven Murphy
+description: |
+  Get Dockers container logs thru commandline.
+
+  Date: 07/14/22
+  
+parameters:
+  - name: CommandContainer
+    default: "docker container ls --format='{{json . }}' 2>/dev/null " 
+  - name: CommandDockerLog
+    default: "docker logs --details "
+    
+sources:
+  - precondition: |
+      SELECT OS From info() where OS = 'linux'
+    query: |
+    
+        LET currenttime = now()
+        LET containerdata <= SELECT parse_json(data=Stdout) as CDJSON FROM execve(argv=["/bin/bash", "-c", CommandContainer],sep='\n')
+
+        LET containerhistory <= SELECT
+           *,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM foreach(
+            row={SELECT CDJSON.ID as ContID FROM containerdata}, 
+            query={
+              SELECT *,ContID FROM execve(argv=["/bin/bash", "-c", CommandDockerLog+ContID],sep='\n')
+        })
+        
+        SELECT 
+           *,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM containerhistory
