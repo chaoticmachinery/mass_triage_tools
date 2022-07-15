@@ -1,0 +1,37 @@
+name: GPS.Linux.Applications.Docker.ContainerLS
+author: Keven Murphy
+description: |
+  Get Dockers container information thru commandline.
+
+  Date: 07/14/22
+  
+parameters:
+  - name: Command
+    default: "docker container ls -a --no-trunc --format='{{json . }}' 2>/dev/null " 
+    
+    
+sources:
+  - precondition: |
+      SELECT OS From info() where OS = 'linux'
+    query: |
+    
+        LET currenttime = now()
+        LET data = SELECT *, parse_json(data=Stdout) as JSON, timestamp(epoch=currenttime) As ClientRunTime FROM execve(argv=["/bin/bash", "-c", Command],sep='\n')
+    
+        SELECT
+           JSON.CreatedAt as CreatedAt,
+           JSON.Command as Command,
+           JSON.ID as ID,
+           JSON.Image as Image,
+           JSON.Labels as Lables,
+           JSON.LocalVolumes as LocalVolumes,
+           JSON.Mounts as Mounts,
+           JSON.Names as Names,
+           JSON.Networks as Networks,
+           JSON.Ports as Ports,
+           JSON.RunningFor as RunningFor,
+           JSON.Size as Size,
+           JSON.State as State,
+           JSON.Status as Status,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM data
