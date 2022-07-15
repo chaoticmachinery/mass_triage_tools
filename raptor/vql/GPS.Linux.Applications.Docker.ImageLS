@@ -1,0 +1,34 @@
+name: GPS.Linux.Applications.Docker.ImageLS
+author: Keven Murphy
+description: |
+  Get Dockers image information thru commandline.
+
+  Date: 07/14/22
+  
+parameters:
+  - name: Command
+    default: "docker image ls -a --no-trunc --format='{{json . }}' 2>/dev/null " 
+    
+    
+sources:
+  - precondition: |
+      SELECT OS From info() where OS = 'linux'
+    query: |
+    
+        LET currenttime = now()
+        LET data = SELECT *, parse_json(data=Stdout) as JSON, timestamp(epoch=currenttime) As ClientRunTime FROM execve(argv=["/bin/bash", "-c", Command],sep='\n')
+    
+        SELECT
+           JSON.CreatedAt as CreatedAt,
+           JSON.Containers as Containers,
+           JSON.CreatedSince as CreatedSince,
+           JSON.Digest as Digest,
+           JSON.ID as ID,
+           JSON.Repository as Repository,
+           JSON.SharedSize as SharedSize,
+           JSON.Size as Size,
+           JSON.Tag as Tag,
+           JSON.UniqueSize as UniqueSize,
+           JSON.VirtualSize as VirtualSize,
+           timestamp(epoch=currenttime) As ClientRunTime
+        FROM data
