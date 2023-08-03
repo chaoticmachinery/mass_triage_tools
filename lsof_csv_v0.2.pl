@@ -23,6 +23,7 @@
 use Switch;
 use Getopt::Long;
 use JSON;
+use Pod::Usage;
 #use Data::Dumper;
 
 
@@ -130,7 +131,7 @@ while (defined($inline = <DATA>)) {
                         if ($pid ne "") {
                            printproc;
                            printfd($boxname);
-                           $access = $devch = $devn = $fd = $inode = $lock = $name = ""; 
+                           $access = $devch = $devn = $fd = $inode = $lock = $name = $seliux = ""; 
                            $offset = $proto = $size = $state = $stream = $type = "";
                            $initalfd = 0;
                         }
@@ -147,7 +148,7 @@ while (defined($inline = <DATA>)) {
                          } else {
                            $initalfd++;
                         }
-                        $access = $devch = $devn = $fd = $inode = $lock = $name = ""; 
+                        $access = $devch = $devn = $fd = $inode = $lock = $name = $seliux = ""; 
                         $offset = $proto = $size = $state = $stream = $type = "";
                         $fd = substr($line, 1);
                     }
@@ -174,7 +175,8 @@ while (defined($inline = <DATA>)) {
       case /^t(.*)/ { $type = substr($line, 1); }
       case /^T(.*)/ { if ($state eq "") { $state = "(" . substr($line, 1); } else { $state = $state . " " . substr($line, 1); }}
       case /^n(.*)/ { $name = substr($line, 1); }
-      else {print "ERROR: unrecognized: \"$_\"\n";}
+      case /^Z(.*)/ { $seliux = substr($line, 1); }
+      else {print "ERROR: unrecognized: \"$line\"\n";}
     }
 }
 &printproc;
