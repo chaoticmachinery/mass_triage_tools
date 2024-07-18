@@ -67,12 +67,10 @@ sub pluginmain {
 					my $dist = $sk->get_value("DistributionName")->get_data();
 					$str .= " ".$dist;
 				};
-                                eval {
-                                        my $basepath = $sk->get_value("BasePath")->get_data();
-                                        $str .= " ".$basepath;
-                                };
-
-				
+				eval {
+                    my $basepath = $sk->get_value("BasePath")->get_data();
+                    $str .= " ".$basepath;
+                };
 				eval {
 					my $kern = $sk->get_value("KernelCommandLine")->get_data();
 					$str .= " (".$kern.")";
