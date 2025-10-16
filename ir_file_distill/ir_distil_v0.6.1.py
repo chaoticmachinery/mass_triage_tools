@@ -603,7 +603,7 @@ def filenamelookup(lineimport,writedata):
                 sqlstr = "SELECT * from files WHERE `file` = ? "  + combinesettings
                 #sqlsrchstr = "%" + srchline + "%"
                 sqlsrchstr = srchline
-                print("Executing SQL: %s with param: %s" % (sqlstr, sqlsrchstr))
+                #print("Executing SQL: %s with param: %s" % (sqlstr, sqlsrchstr))
                 cur.execute(sqlstr, (sqlsrchstr,) )
             
                 rows = cur.fetchall()
