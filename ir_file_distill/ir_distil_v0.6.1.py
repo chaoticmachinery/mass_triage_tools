@@ -547,7 +547,7 @@ def malwarelookup(lineimport,writedata,malwarelist,dbtype):
                     dataline.append("")  #Product Version
                     src = 'Malware %s'  % dbitem
                     dataline.append(src)  #DB Src
-                    #dataline.append("\n")
+                    dataline.append("\n")
                     writedata=writedata+1;
 
        except Exception as e:
@@ -595,9 +595,16 @@ def filenamelookup(lineimport,writedata):
                 filecheckcon.row_factory = lite.Row
                 cur = filecheckcon.cursor()
                 srchline = line.decode("utf8")
+
+                # --- Remove leading \\?\ if it exists ---
+                if srchline.startswith("\\\\?\\"):
+                    srchline = srchline[4:]
+
                 sqlstr = "SELECT * from files WHERE `file` = ? "  + combinesettings
-                #print sqlstr
-                cur.execute(sqlstr, (srchline[2:],) )
+                #sqlsrchstr = "%" + srchline + "%"
+                sqlsrchstr = srchline
+                print("Executing SQL: %s with param: %s" % (sqlstr, sqlsrchstr))
+                cur.execute(sqlstr, (sqlsrchstr,) )
             
                 rows = cur.fetchall()
 
