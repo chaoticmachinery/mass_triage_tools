@@ -21,7 +21,12 @@
 # 1) python-cim is required for the script. Make sure to install github version as
 #    the pip install version is hosed.
 #
-# Mod Log:
+# Rough notes for Flare-WMI install (requires python 3.10)
+# mkdir /appl/wmi
+# cd /appl/wmi
+# python3 -m venv env
+# source env/bin/activate
+# pip install git+https://github.com/fireeye/flare-wmi.git#subdirectory=python-cim
 #===================================================================================
 
 import sys
