@@ -190,6 +190,13 @@ def main(argv):
         "root\\standardcimv2",
         "root\\appv",
         "root\\msdtc",
+        "root\\inventorylogging",
+        "root\\microsoftactivedirectory",
+        "root\\microsoftdfs",
+        "root\\microsoftdns",
+        "root\\nap",
+        "root\\sddc",
+        "root\\webadministration",
     ]
 
     def is_default_namespace(ns_str):
